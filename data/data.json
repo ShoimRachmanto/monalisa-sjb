@@ -1,6 +1,6 @@
 [
-  {"kpknl": "Palembang", "jumlah": 120},
-  {"kpknl": "Jambi", "jumlah": 90},
-  {"kpknl": "Lahat", "jumlah": 60},
-  {"kpknl": "Pangkalpinang", "jumlah": 40}
+  { "kpknl": "Palembang", "jumlah": 120, "limit": 1200000000 },
+  { "kpknl": "Jambi", "jumlah": 90, "limit": 800000000 },
+  { "kpknl": "Lahat", "jumlah": 60, "limit": 550000000 },
+  { "kpknl": "Pangkalpinang", "jumlah": 40, "limit": 350000000 }
 ]

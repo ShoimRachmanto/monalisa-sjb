@@ -2,71 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Monalisa SJB - Google Charts + DataTable</title>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <title>Monalisa SJB - Plotly Multi-Axis Chart</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <h2>Google Charts - Pie Chart</h2>
-  <div id="piechart"></div>
-  <button id="exportPie">Download Pie as PNG</button>
-
-  <h2>Google Charts - Line Chart</h2>
-  <div id="linechart"></div>
-  <button id="exportLine">Download Line as PNG</button>
-
-  <h2>Google DataTable</h2>
-  <div id="datatable"></div>
+  <h2>Plotly Multi-Axis Chart</h2>
+  <div id="plotlyChart" style="width: 90%; height: 500px;"></div>
 
   <script>
-    google.charts.load('current', {'packages':['corechart', 'table']});
-    google.charts.setOnLoadCallback(drawCharts);
+    fetch('data/data.json')
+      .then(response => response.json())
+      .then(data => {
+        // Contoh: Asumsikan JSON punya dua field: jumlah lot (left Y) dan nilai limit (right Y)
+        // Pakai jumlah * 10 sebagai dummy nilai limit
 
-    function drawCharts() {
-      fetch('data/data.json')
-        .then(response => response.json())
-        .then(data => {
-          const chartData = [['KPKNL', 'Jumlah']].concat(data.map(d => [d.kpknl, d.jumlah]));
+        const x = data.map(d => d.kpknl);
+        const y1 = data.map(d => d.jumlah);
+        const y2 = data.map(d => d.jumlah * 10); // Dummy nilai limit
 
-          var pieData = google.visualization.arrayToDataTable(chartData);
-          var lineData = google.visualization.arrayToDataTable(chartData);
+        const trace1 = {
+          x: x,
+          y: y1,
+          name: 'Jumlah Lot',
+          type: 'bar',
+          yaxis: 'y1'
+        };
 
-          var pieChart = new google.visualization.PieChart(document.getElementById('piechart'));
-          var lineChart = new google.visualization.LineChart(document.getElementById('linechart'));
+        const trace2 = {
+          x: x,
+          y: y2,
+          name: 'Nilai Limit',
+          type: 'scatter',
+          mode: 'lines+markers',
+          yaxis: 'y2'
+        };
 
-          pieChart.draw(pieData, { title: 'Pie Chart' });
-          lineChart.draw(lineData, { title: 'Line Chart' });
+        const layout = {
+          title: 'Multi-Axis: Jumlah Lot & Nilai Limit',
+          yaxis: { title: 'Jumlah Lot' },
+          yaxis2: {
+            title: 'Nilai Limit',
+            overlaying: 'y',
+            side: 'right'
+          },
+          legend: { x: 0, y: 1.2 }
+        };
 
-          // DataTable
-          var tableData = new google.visualization.DataTable();
-          tableData.addColumn('string', 'KPKNL');
-          tableData.addColumn('number', 'Jumlah');
-          data.forEach(d => tableData.addRow([d.kpknl, d.jumlah]));
-
-          var table = new google.visualization.Table(document.getElementById('datatable'));
-          table.draw(tableData, { showRowNumber: true, width: '50%' });
-
-          // Export PNG
-          document.getElementById('exportPie').onclick = () => {
-            var uri = pieChart.getImageURI();
-            downloadURI(uri, 'piechart.png');
-          };
-
-          document.getElementById('exportLine').onclick = () => {
-            var uri = lineChart.getImageURI();
-            downloadURI(uri, 'linechart.png');
-          };
-
-          function downloadURI(uri, name) {
-            var link = document.createElement("a");
-            link.download = name;
-            link.href = uri;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }
-
-        });
-    }
+        Plotly.newPlot('plotlyChart', [trace1, trace2], layout);
+      });
   </script>
 </body>
 </html>
