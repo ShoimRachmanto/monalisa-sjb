@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Monalisa SJB - Grafik & Tabel</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    canvas, #plotlyChart, #apexChart, #googleChart {
+      width: 600px;
+      height: 400px;
+      margin: 20px auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h2>Chart.js - Bar Chart</h2>
+  <canvas id="chartjsChart"></canvas>
+
+  <h2>Plotly - Scatter Plot</h2>
+  <div id="plotlyChart"></div>
+
+  <h2>ApexCharts - Line Chart</h2>
+  <div id="apexChart"></div>
+
+  <h2>Google Charts - Pie Chart</h2>
+  <div id="googleChart"></div>
+
+  <script>
+    const data = [
+      { kpknl: "Palembang", jumlah: 120 },
+      { kpknl: "Jambi", jumlah: 90 },
+      { kpknl: "Lahat", jumlah: 60 },
+      { kpknl: "Pangkalpinang", jumlah: 30 }
+    ];
+
+    // Chart.js
+    new Chart(document.getElementById('chartjsChart'), {
+      type: 'bar',
+      data: {
+        labels: data.map(d => d.kpknl),
+        datasets: [{
+          label: 'Jumlah',
+          data: data.map(d => d.jumlah)
+        }]
+      }
+    });
+
+    // Plotly
+    const plotlyData = [{
+      x: data.map(d => d.kpknl),
+      y: data.map(d => d.jumlah),
+      mode: 'markers',
+      type: 'scatter'
+    }];
+    Plotly.newPlot('plotlyChart', plotlyData);
+
+    // ApexCharts
+    var options = {
+      chart: { type: 'line' },
+      series: [{
+        name: 'Jumlah',
+        data: data.map(d => d.jumlah)
+      }],
+      xaxis: {
+        categories: data.map(d => d.kpknl)
+      }
+    };
+    var chart = new ApexCharts(document.querySelector("#apexChart"), options);
+    chart.render();
+
+    // Google Charts
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var gData = google.visualization.arrayToDataTable([
+        ['KPKNL', 'Jumlah'],
+        ...data.map(d => [d.kpknl, d.jumlah])
+      ]);
+      var chart = new google.visualization.PieChart(document.getElementById('googleChart'));
+      chart.draw(gData, {title: 'Proporsi'});
+    }
+  </script>
+</body>
+</html>
