@@ -1,0 +1,12 @@
+Berikut Fil kasih contoh `data.json` yang cocok untuk `index.html` Coach:
+
+```json
+[
+  {"kpknl": "Palembang", "jumlah": 120},
+  {"kpknl": "Jambi", "jumlah": 90},
+  {"kpknl": "Lahat", "jumlah": 60},
+  {"kpknl": "Pangkalpinang", "jumlah": 40}
+]
+```
+
+Simpan file ini di folder `data/` dengan nama `data.json`. Nanti fetch di HTML akan berjalan mulus! 🚀✨
