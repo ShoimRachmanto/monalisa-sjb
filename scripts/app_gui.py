@@ -197,9 +197,18 @@ class PandasModel(QtCore.QAbstractTableModel):
     def __init__(self, df=pd.DataFrame(), parent=None):
         super(PandasModel, self).__init__(parent)
         try:
-            self._df = df.apply(pd.to_numeric)
+            self._df = df.apply(pd.to_numeric, errors='ignore')
         except Exception:
             self._df = df.copy()
+
+        # ✅ Kolom-kolom yang akan diformat ribuan (US format)
+        self.format_columns = {
+            "pokok_lelang",
+            "pokok_q1", "pokok_q2", "pokok_q3", "pokok_q4",
+            "pnbp_lelang", "pnbp_q1", "pnbp_q2", "pnbp_q3", "pnbp_q4",
+            "pph",
+            "bphtb"
+        }
 
     def rowCount(self, parent=None):
         return len(self._df.index)
@@ -210,13 +219,20 @@ class PandasModel(QtCore.QAbstractTableModel):
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if index.isValid():
             value = self._df.iloc[index.row(), index.column()]
-            col_name = self._df.columns[index.column()].lower()
+            col_name = self._df.columns[index.column()]
+            
             if role == QtCore.Qt.TextAlignmentRole:
-                if any(key in col_name for key in ['pokok', 'pnbp', 'pph', 'bphtb']):
+                if col_name in self.format_columns:
                     return QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
+
             if role == QtCore.Qt.DisplayRole:
-                if isinstance(value, (int, float)) and any(key in col_name for key in ['pokok', 'pnbp', 'pph', 'bphtb']):
-                    return f"{int(float(value)):,}".replace(",", ".")
+                if col_name in self.format_columns:
+                    try:
+                        if pd.isna(value):
+                            return ""
+                        return f"{int(float(value)):,}"
+                    except:
+                        return ""
                 return str(value)
         return None
 
