@@ -30,8 +30,6 @@ class MonalisaSJB(QtWidgets.QWidget):
         self.main_layout.addLayout(export_import_layout)
 
         # === Kinerja Filter, Table, CRUD ===
-        self.main_layout.addWidget(QtWidgets.QLabel("Tabel: kinerja_bulanan"))
-
         filter_row_kinerja = QtWidgets.QHBoxLayout()
         filter_row_kinerja.addWidget(QtWidgets.QLabel("KPKNL:"))
         self.filter_kpknl_kinerja = QtWidgets.QComboBox()
@@ -52,38 +50,86 @@ class MonalisaSJB(QtWidgets.QWidget):
         self.main_layout.addWidget(self.table_kinerja)
 
         crud_kinerja = QtWidgets.QHBoxLayout()
-        for text, color in zip(["Add", "Edit", "Delete", "Save"],
-                                ["#4CAF50", "#FFC107", "#F44336", "#2196F3"]):
-            btn = QtWidgets.QPushButton(text)
-            btn.setStyleSheet(f"background-color: {color}; color: white;")
-            crud_kinerja.addWidget(btn)
+        self.add_kinerja_btn = QtWidgets.QPushButton("Add")
+        self.edit_kinerja_btn = QtWidgets.QPushButton("Edit")
+        self.delete_kinerja_btn = QtWidgets.QPushButton("Delete")
+        self.save_kinerja_btn = QtWidgets.QPushButton("Save")
+
+        # Warna tombol
+        self.add_kinerja_btn.setStyleSheet("background-color: #4CAF50; color: white;")
+        self.edit_kinerja_btn.setStyleSheet("background-color: #FFC107; color: white;")
+        self.delete_kinerja_btn.setStyleSheet("background-color: #F44336; color: white;")
+        self.save_kinerja_btn.setStyleSheet("background-color: #2196F3; color: white;")
+
+        # Hubungkan aksi
+        self.add_kinerja_btn.clicked.connect(self.add_kinerja)
+        self.edit_kinerja_btn.clicked.connect(self.edit_kinerja)
+        self.delete_kinerja_btn.clicked.connect(self.delete_kinerja)
+        self.save_kinerja_btn.clicked.connect(self.save_kinerja)
+
+        crud_kinerja.addWidget(self.add_kinerja_btn)
+        crud_kinerja.addWidget(self.edit_kinerja_btn)
+        crud_kinerja.addWidget(self.delete_kinerja_btn)
+        crud_kinerja.addWidget(self.save_kinerja_btn)
         self.main_layout.addLayout(crud_kinerja)
 
-        # === Table, CRUD ===
+        # ================= Target Table, CRUD =========================
         self.table_target = QtWidgets.QTableView()
         self.main_layout.addWidget(self.table_target)
 
         crud_target = QtWidgets.QHBoxLayout()
-        for text, color in zip(["Add", "Edit", "Delete", "Save"],
-                                ["#4CAF50", "#FFC107", "#F44336", "#2196F3"]):
-            btn = QtWidgets.QPushButton(text)
-            btn.setStyleSheet(f"background-color: {color}; color: white;")
-            crud_target.addWidget(btn)
+        self.add_target_btn = QtWidgets.QPushButton("Add")
+        self.edit_target_btn = QtWidgets.QPushButton("Edit")
+        self.delete_target_btn = QtWidgets.QPushButton("Delete")
+        self.save_target_btn = QtWidgets.QPushButton("Save")
+
+        # Warna tombol
+        self.add_target_btn.setStyleSheet("background-color: #4CAF50; color: white;")
+        self.edit_target_btn.setStyleSheet("background-color: #FFC107; color: white;")
+        self.delete_target_btn.setStyleSheet("background-color: #F44336; color: white;")
+        self.save_target_btn.setStyleSheet("background-color: #2196F3; color: white;")
+
+        # Sambungkan ke method
+        self.add_target_btn.clicked.connect(self.add_target)
+        self.edit_target_btn.clicked.connect(self.edit_target)
+        self.delete_target_btn.clicked.connect(self.delete_target)
+        self.save_target_btn.clicked.connect(self.save_target)
+
+        crud_target.addWidget(self.add_target_btn)
+        crud_target.addWidget(self.edit_target_btn)
+        crud_target.addWidget(self.delete_target_btn)
+        crud_target.addWidget(self.save_target_btn)
         self.main_layout.addLayout(crud_target)
 
         # === JSON & Push ===
         self.hitung_btn = QtWidgets.QPushButton("Hitung dan Update JSON")
+        self.hitung_btn.setFixedSize(200, 40)
         self.hitung_btn.clicked.connect(self.hitung_json)
-        self.main_layout.addWidget(self.hitung_btn)
 
         self.status_label = QtWidgets.QLabel("Status Internet: Checking...")
+
         self.push_btn = QtWidgets.QPushButton("Push JSON")
-        self.goto_web_btn = QtWidgets.QPushButton("Go to Web")
+        self.push_btn.setFixedSize(120, 40)
         self.push_btn.clicked.connect(self.push_json)
+
+        self.goto_web_btn = QtWidgets.QPushButton("Go to Web")
+        self.goto_web_btn.setFixedSize(120, 40)
         self.goto_web_btn.clicked.connect(lambda: webbrowser.open("https://shoimrachmanto.github.io/monalisa-sjb/"))
-        self.main_layout.addWidget(self.status_label)
-        self.main_layout.addWidget(self.push_btn)
-        self.main_layout.addWidget(self.goto_web_btn)
+
+        # === Layout satu baris ===
+        json_push_layout = QtWidgets.QHBoxLayout()
+        json_push_layout.addStretch()
+        json_push_layout.addWidget(self.hitung_btn)
+        json_push_layout.addSpacing(20)  # Jarak antar widget
+        json_push_layout.addWidget(self.status_label)
+        json_push_layout.addSpacing(20)
+        json_push_layout.addWidget(self.push_btn)
+        json_push_layout.addSpacing(20)
+        json_push_layout.addWidget(self.goto_web_btn)
+        json_push_layout.addStretch()
+
+        # Tambahkan ke main layout
+        self.main_layout.addLayout(json_push_layout)
 
         self.setLayout(self.main_layout)
 
@@ -192,6 +238,30 @@ class MonalisaSJB(QtWidgets.QWidget):
 
     def push_json(self):
         QtWidgets.QMessageBox.information(self, "Push", "Push JSON belum diimplementasi.")
+
+    def add_kinerja(self):
+        QtWidgets.QMessageBox.information(self, "Add", "Add Kinerja clicked!")
+
+    def edit_kinerja(self):
+        QtWidgets.QMessageBox.information(self, "Edit", "Edit Kinerja clicked!")
+
+    def delete_kinerja(self):
+        QtWidgets.QMessageBox.information(self, "Delete", "Delete Kinerja clicked!")
+
+    def save_kinerja(self):
+        QtWidgets.QMessageBox.information(self, "Save", "Save Kinerja clicked!")
+
+    def add_target(self):
+        QtWidgets.QMessageBox.information(self, "Add", "Add Target clicked!")
+
+    def edit_target(self):
+        QtWidgets.QMessageBox.information(self, "Edit", "Edit Target clicked!")
+
+    def delete_target(self):
+        QtWidgets.QMessageBox.information(self, "Delete", "Delete Target clicked!")
+
+    def save_target(self):
+        QtWidgets.QMessageBox.information(self, "Save", "Save Target clicked!")
 
 class PandasModel(QtCore.QAbstractTableModel):
     def __init__(self, df=pd.DataFrame(), parent=None):
