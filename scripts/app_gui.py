@@ -48,7 +48,10 @@ class MonalisaSJB(QtWidgets.QWidget):
 
         self.table_kinerja = QtWidgets.QTableView()
         self.main_layout.addWidget(self.table_kinerja)
-
+        
+        # ========= bikin aktif area tabel untuk keperluan CRUD ============
+        self.df_kinerja = pd.DataFrame()
+        
         crud_kinerja = QtWidgets.QHBoxLayout()
         self.add_kinerja_btn = QtWidgets.QPushButton("Add")
         self.edit_kinerja_btn = QtWidgets.QPushButton("Edit")
@@ -76,6 +79,9 @@ class MonalisaSJB(QtWidgets.QWidget):
         # ================= Target Table, CRUD =========================
         self.table_target = QtWidgets.QTableView()
         self.main_layout.addWidget(self.table_target)
+
+        # ======== bikin aktif area tabel untuk CRUD ========
+        self.df_target = pd.DataFrame()
 
         crud_target = QtWidgets.QHBoxLayout()
         self.add_target_btn = QtWidgets.QPushButton("Add")
@@ -186,9 +192,15 @@ class MonalisaSJB(QtWidgets.QWidget):
     def load_table(self, table_name, view):
         conn = sqlite3.connect("D:/WongsoApps/monalisa-sjb/db/kinerja_sjb.db")
         df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+        conn.close()
+
+        if table_name == "kinerja_bulanan":
+            self.df_kinerja = df.copy()
+        elif table_name == "target_lelang":
+            self.df_target = df.copy()
+
         model = PandasModel(df)
         view.setModel(model)
-        conn.close()
 
     def check_internet(self):
         try:
@@ -239,39 +251,86 @@ class MonalisaSJB(QtWidgets.QWidget):
     def push_json(self):
         QtWidgets.QMessageBox.information(self, "Push", "Push JSON belum diimplementasi.")
 
+    # ===== Def untuk CRUD ========
     def add_kinerja(self):
-        QtWidgets.QMessageBox.information(self, "Add", "Add Kinerja clicked!")
+        dialog = AddKinerjaDialog(self.df_kinerja.columns)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            data = dialog.get_data()
+            # Tambah ke DB langsung
+            conn = sqlite3.connect("D:/WongsoApps/monalisa-sjb/db/kinerja_sjb.db")
+            df_new = pd.DataFrame([data])
+            df_new.to_sql("kinerja_bulanan", conn, if_exists="append", index=False)
+            conn.close()
+            # Reload tabel
+            self.load_table("kinerja_bulanan", self.table_kinerja)
+            QtWidgets.QMessageBox.information(self, "Tambah", "Data berhasil ditambahkan!")
 
     def edit_kinerja(self):
-        QtWidgets.QMessageBox.information(self, "Edit", "Edit Kinerja clicked!")
+        # Aktifkan mode editable
+        model = PandasModel(self.df_kinerja, editable=True)
+        self.table_kinerja.setModel(model)
+        QtWidgets.QMessageBox.information(self, "Edit", "Tabel kinerja sekarang bisa diedit langsung!")
 
     def delete_kinerja(self):
-        QtWidgets.QMessageBox.information(self, "Delete", "Delete Kinerja clicked!")
+        index = self.table_kinerja.currentIndex()
+        if index.isValid():
+            row = index.row()
+            self.df_kinerja = self.df_kinerja.drop(self.df_kinerja.index[row]).reset_index(drop=True)
+            # Langsung commit ke DB
+            conn = sqlite3.connect("D:/WongsoApps/monalisa-sjb/db/kinerja_sjb.db")
+            self.df_kinerja.to_sql("kinerja_bulanan", conn, if_exists="replace", index=False)
+            conn.close()
+            # Reload
+            self.table_kinerja.setModel(PandasModel(self.df_kinerja))
+            QtWidgets.QMessageBox.information(self, "Hapus", "Baris berhasil dihapus & DB diupdate!")
+        else:
+            QtWidgets.QMessageBox.warning(self, "Hapus", "Pilih baris dulu untuk dihapus!")
 
     def save_kinerja(self):
-        QtWidgets.QMessageBox.information(self, "Save", "Save Kinerja clicked!")
+        conn = sqlite3.connect("D:/WongsoApps/monalisa-sjb/db/kinerja_sjb.db")
+        self.df_kinerja.to_sql("kinerja_bulanan", conn, if_exists="replace", index=False)
+        conn.close()
+        QtWidgets.QMessageBox.information(self, "Save", "Perubahan berhasil disimpan ke database!")
 
     def add_target(self):
-        QtWidgets.QMessageBox.information(self, "Add", "Add Target clicked!")
+        dialog = AddTargetDialog(self.df_target.columns)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            data = dialog.get_data()
+            # Insert ke database
+            conn = sqlite3.connect("D:/WongsoApps/monalisa-sjb/db/kinerja_sjb.db")
+            df_new = pd.DataFrame([data])
+            df_new.to_sql("target_lelang", conn, if_exists="append", index=False)
+            conn.close()
+            # Reload tabel
+            self.load_table("target_lelang", self.table_target)
+            QtWidgets.QMessageBox.information(self, "Tambah", "Data Target berhasil ditambahkan!")
 
     def edit_target(self):
-        QtWidgets.QMessageBox.information(self, "Edit", "Edit Target clicked!")
+        # Aktifkan mode editable untuk tabel target_lelang
+        model = PandasModel(self.df_target, editable=True)
+        self.table_target.setModel(model)
+        QtWidgets.QMessageBox.information(self, "Edit", "Tabel target lelang sekarang bisa diedit langsung!")
 
     def delete_target(self):
-        QtWidgets.QMessageBox.information(self, "Delete", "Delete Target clicked!")
+        index = self.table_target.currentIndex()
+        if index.isValid():
+            row = index.row()
+            self.df_target = self.df_target.drop(self.df_target.index[row]).reset_index(drop=True)
+            self.table_target.setModel(PandasModel(self.df_target))
+        else:
+            QtWidgets.QMessageBox.warning(self, "Delete", "Pilih baris yang mau dihapus dulu!")
 
     def save_target(self):
-        QtWidgets.QMessageBox.information(self, "Save", "Save Target clicked!")
+        conn = sqlite3.connect("D:/WongsoApps/monalisa-sjb/db/kinerja_sjb.db")
+        self.df_target.to_sql("target_lelang", conn, if_exists="replace", index=False)
+        conn.close()
+        QtWidgets.QMessageBox.information(self, "Save", "Data Target berhasil disimpan ke database!")
 
 class PandasModel(QtCore.QAbstractTableModel):
-    def __init__(self, df=pd.DataFrame(), parent=None):
+    def __init__(self, df=pd.DataFrame(), parent=None, editable=False):
         super(PandasModel, self).__init__(parent)
-        try:
-            self._df = df.apply(pd.to_numeric, errors='ignore')
-        except Exception:
-            self._df = df.copy()
-
-        # ✅ Kolom-kolom yang akan diformat ribuan (US format)
+        self._df = df.apply(pd.to_numeric, errors='ignore')
+        self.editable = editable
         self.format_columns = {
             "pokok_lelang",
             "pokok_q1", "pokok_q2", "pokok_q3", "pokok_q4",
@@ -279,6 +338,14 @@ class PandasModel(QtCore.QAbstractTableModel):
             "pph",
             "bphtb"
         }
+
+    def flags(self, index):
+        flags = super().flags(index)
+        if self.editable:
+            flags |= QtCore.Qt.ItemIsEditable
+        else:
+            flags &= ~QtCore.Qt.ItemIsEditable
+        return flags
 
     def rowCount(self, parent=None):
         return len(self._df.index)
@@ -290,7 +357,7 @@ class PandasModel(QtCore.QAbstractTableModel):
         if index.isValid():
             value = self._df.iloc[index.row(), index.column()]
             col_name = self._df.columns[index.column()]
-            
+
             if role == QtCore.Qt.TextAlignmentRole:
                 if col_name in self.format_columns:
                     return QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter
@@ -306,10 +373,55 @@ class PandasModel(QtCore.QAbstractTableModel):
                 return str(value)
         return None
 
+    def setData(self, index, value, role=QtCore.Qt.EditRole):
+        if index.isValid() and role == QtCore.Qt.EditRole:
+            self._df.iloc[index.row(), index.column()] = value
+            self.dataChanged.emit(index, index, [QtCore.Qt.DisplayRole])
+            return True
+        return False
+
     def headerData(self, col, orientation, role):
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             return self._df.columns[col]
         return None
+
+# ====== membuka jendela TAMBAH data kinerja =============
+class AddKinerjaDialog(QtWidgets.QDialog):
+    def __init__(self, columns):
+        super().__init__()
+        self.setWindowTitle("Tambah Data Kinerja")
+        self.layout = QtWidgets.QFormLayout(self)
+        self.inputs = {}
+        for col in columns:
+            line_edit = QtWidgets.QLineEdit()
+            self.layout.addRow(col, line_edit)
+            self.inputs[col] = line_edit
+
+        self.submit_btn = QtWidgets.QPushButton("Tambah")
+        self.submit_btn.clicked.connect(self.accept)
+        self.layout.addRow(self.submit_btn)
+
+    def get_data(self):
+        return {col: self.inputs[col].text() for col in self.inputs}
+
+# ========= membuka windows tambah data target ==============
+class AddTargetDialog(QtWidgets.QDialog):
+    def __init__(self, columns):
+        super().__init__()
+        self.setWindowTitle("Tambah Data Target Lelang")
+        self.layout = QtWidgets.QFormLayout(self)
+        self.inputs = {}
+        for col in columns:
+            line_edit = QtWidgets.QLineEdit()
+            self.layout.addRow(col, line_edit)
+            self.inputs[col] = line_edit
+
+        self.submit_btn = QtWidgets.QPushButton("Tambah")
+        self.submit_btn.clicked.connect(self.accept)
+        self.layout.addRow(self.submit_btn)
+
+    def get_data(self):
+        return {col: self.inputs[col].text() for col in self.inputs}
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
