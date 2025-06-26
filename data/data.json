@@ -1,6 +1,98 @@
 [
-  { "kpknl": "Palembang", "jumlah": 120, "limit": 1200000000 },
-  { "kpknl": "Jambi", "jumlah": 90, "limit": 800000000 },
-  { "kpknl": "Lahat", "jumlah": 60, "limit": 550000000 },
-  { "kpknl": "Pangkalpinang", "jumlah": 40, "limit": 350000000 }
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 1,
+    "pokok_lelang": 68325804.0,
+    "pokok_target_q": 300000000.0,
+    "persentase": 22.78
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 2,
+    "pokok_lelang": 130540908.0,
+    "pokok_target_q": 300000000.0,
+    "persentase": 43.51
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 3,
+    "pokok_lelang": 229253039.0,
+    "pokok_target_q": 300000000.0,
+    "persentase": 76.42
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 4,
+    "pokok_lelang": 304292886.0,
+    "pokok_target_q": 300000000.0,
+    "persentase": 101.43
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 5,
+    "pokok_lelang": 371937055.0,
+    "pokok_target_q": 300000000.0,
+    "persentase": 123.98
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 6,
+    "pokok_lelang": null,
+    "pokok_target_q": 300000000.0,
+    "persentase": 0.0
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 7,
+    "pokok_lelang": null,
+    "pokok_target_q": 300000000.0,
+    "persentase": 0.0
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 8,
+    "pokok_lelang": null,
+    "pokok_target_q": 300000000.0,
+    "persentase": 0.0
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 9,
+    "pokok_lelang": null,
+    "pokok_target_q": 300000000.0,
+    "persentase": 0.0
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 10,
+    "pokok_lelang": null,
+    "pokok_target_q": 1200000000.0,
+    "persentase": 0.0
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 11,
+    "pokok_lelang": null,
+    "pokok_target_q": 1200000000.0,
+    "persentase": 0.0
+  },
+  {
+    "kpknl": "KANWIL SJB",
+    "tahun": 2025,
+    "bulan": 12,
+    "pokok_lelang": null,
+    "pokok_target_q": 1200000000.0,
+    "persentase": 0.0
+  }
 ]
