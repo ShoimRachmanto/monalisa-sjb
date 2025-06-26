@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Grafik Kinerja Lelang Kanwil SJB</title>
+    <title>Grafik Kinerja Lelang Kanwil SJB - Grouped Bar</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <h2 style="text-align:center">Grafik Kinerja Lelang Kanwil SJB - Pokok Lelang</h2>
+    <h2 style="text-align:center">Grafik Kinerja Lelang Kanwil SJB - Grouped Bar</h2>
     <div id="grafik" style="width:90%;max-width:1000px;margin:auto;"></div>
 
     <script>
@@ -47,7 +46,7 @@
         };
 
         const layout = {
-            barmode: 'overlay',
+            barmode: 'group',
             xaxis: { title: 'Bulan' },
             yaxis: { title: 'Target (Rp)' },
             yaxis2: {
